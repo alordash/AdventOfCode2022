@@ -1,8 +1,4 @@
-import           Control.DeepSeq    (deepseq)
-import           Control.Monad      (join)
 import           Data.List
-import           GHC.Data.ShortText (ShortText (contents))
-import           Text.Read
 
 split :: (a -> Bool) -> [a] -> [[a]]
 split p s =
