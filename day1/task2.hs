@@ -22,7 +22,7 @@ topN n l = take n $ reverse $ sort l
 main = do
   a <- inputLoop
   let b = split null a
-  let nums = filter (/= []) (map (map read) b :: [[Int]])
+  let nums = filter (/= []) (map (map read) b)
   let groupSums = map sum nums
   let ans = sum $ topN 3 groupSums
   print ans

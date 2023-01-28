@@ -92,11 +92,7 @@ calcStrategyScore (e, m) = calcTurnScore m + calcRoundScore (e, m)
 main = do
   lines <- inputLoop
   let setups =
-        map
-          ((\[x, y] ->
-              (toTurn (read x :: InputEnemyTurn), toOutcome (read y :: InputOutcome))) .
-           words)
-          lines
+        map ((\[x, y] -> (toTurn (read x), toOutcome (read y))) . words) lines
   let strategies = map (\(t, o) -> (t, calcTurn (t, o))) setups
   let scores = map calcStrategyScore strategies
   print strategies

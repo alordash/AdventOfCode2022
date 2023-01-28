@@ -76,9 +76,7 @@ main = do
   lines <- inputLoop
   let strategies =
         map
-          ((\[x, y] ->
-              ( convertEnemyTurn (read x :: InputEnemyTurn)
-              , convertMyTurn (read y :: InputMyTurn))) .
+          ((\[x, y] -> (convertEnemyTurn (read x), convertMyTurn (read y))) .
            words)
           lines
   let scores = map calcStrategyScore strategies
