@@ -150,23 +150,39 @@ addPathToFS (Dir name contents) Path { name = filename
         (Nothing, _)   -> (Dir d [], contents)
 
 processFormFS :: FS -> [Path] -> FS
-processFormFS fs []     = fs
-processFormFS fs (p:ps) = processFormFS (addPathToFS fs p) ps
+processFormFS = foldl addPathToFS
 
 -- processFormFS fs (p:ps) = case tryFindFS [fs] (pathName p) of
 formFS :: [Path] -> FS
 formFS [] = Dir "/" []
 formFS ps = processFormFS (Dir "/" []) ps
 
+calcSize :: FS -> Int
+calcSize (File _ size)    = size
+calcSize (Dir _ contents) = sum $ map calcSize contents
+
+mapFS :: (FS -> a) -> [FS] -> [a]
+mapFS _ [] = []
+mapFS fmap (f:fs) =
+  (case f of
+     File name size    -> []
+     Dir name contents -> fmap (Dir name contents) : mapFS fmap contents) ++
+  mapFS fmap fs
+
+calcFSSizes :: [FS] -> [Int]
+calcFSSizes [] = []
+calcFSSizes fs = mapFS calcSize fs
+
+sizeThreshold = 100000
+
 main = do
-  let (Dir _ contents) = testFS
-  -- print testFS
-  print $ tryExtractFS contents "b.txt"
   lines <- inputLoop
   let commands = parseCommands lines
   let files = getFiles commands
-  putStrLn ""
-  -- print $ files !! 2
-  putStrLn ""
   let fs = formFS files
+  let sizes = calcFSSizes [fs]
   print fs
+  print sizes
+  let fitSizes = filter (<= sizeThreshold) sizes
+  let answer = sum fitSizes
+  print answer
